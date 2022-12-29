@@ -84,7 +84,7 @@ class Board {
 
 class Player {
   constructor(marker) {
-    this.marker = marker
+    this.marker = marker;
   }
 
   getMarker() {
@@ -174,7 +174,7 @@ class TTTGame {
 
       if (validChoices.includes(choice)) break;
 
-      console.log("Sorry that is not a valid choice.")
+      console.log("Sorry that is not a valid choice.");
     }
 
     this.board.markSquareAt(choice, this.human.getMarker());
