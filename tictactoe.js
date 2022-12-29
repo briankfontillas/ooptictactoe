@@ -31,6 +31,18 @@ class Board {
     }
   }
 
+  displayWithClear() {
+    console.clear();
+    console.log("");
+    console.log("");
+    console.log("");
+    console.log("");
+    console.log("");
+    console.log("");
+    // console.log("");
+    this.display();
+  }
+
   display() {
     let squares = this.squares;
     console.log("");
@@ -45,6 +57,7 @@ class Board {
     console.log("     |     |");
     console.log(`  ${squares["7"].getMarker()}  |  ${squares["8"].getMarker()}  |  ${squares["9"].getMarker()}`);
     console.log("     |     |");
+    console.log("");
   }
 
   markSquareAt(key, marker) {
@@ -66,12 +79,6 @@ class Board {
     });
 
     return markers.length;
-  }
-}
-
-class Row {
-  constructor() {
-
   }
 }
 
@@ -115,29 +122,32 @@ class TTTGame {
   }
 
   play() {
-    //SPIKE
     this.displayWelcomeMessage();
 
+    this.board.display();
     while (true) {
-      this.board.display();
-
       this.humanMoves();
       if (this.gameOver()) break;
 
       this.computerMoves();
       if (this.gameOver()) break;
+
+      this.board.displayWithClear();
     }
 
+    this.board.displayWithClear();
     this.displayResults();
     this.displayGoodbyeMessage();
   }
 
   displayWelcomeMessage() {
+    console.clear();
     console.log("+-------------------------+");
     console.log("|                         |");
     console.log("| Welcome to Tic Tac Toe! |");
     console.log("|                         |");
     console.log("+-------------------------+");
+    console.log("");
   }
 
   displayGoodbyeMessage() {
@@ -145,7 +155,13 @@ class TTTGame {
   }
 
   displayResults() {
-
+    if (this.isWinner(this.human)) {
+      console.log("You won! Congratulations!");
+    } else if (this.isWinner(this.computer)) {
+      console.log("I won! Take that, human!");
+    } else {
+      console.log("A tie game. How boring.");
+    }
   }
 
   humanMoves() {
@@ -162,6 +178,7 @@ class TTTGame {
     }
 
     this.board.markSquareAt(choice, this.human.getMarker());
+    console.clear();
   }
 
   computerMoves() {
@@ -180,8 +197,13 @@ class TTTGame {
   }
 
   someoneWon() {
-    //stub
-    return false;
+    return this.isWinner(this.human) || this.isWinner(this.computer);
+  }
+
+  isWinner(player) {
+    return TTTGame.POSSIBLE_WINNING_ROWS.some(row => {
+      return this.board.countMerkersFor(player, row) === 3;
+    });
   }
 }
 
