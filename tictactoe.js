@@ -170,7 +170,7 @@ class TTTGame {
       return choices.join(` ${word} `);
     } else {
       return choices.slice(0, choices.length - 1)
-      .join(`${punc} `).concat(` ${word} ${choices[choices.length - 1]}`);
+        .join(`${punc} `).concat(` ${word} ${choices[choices.length - 1]}`);
     }
   }
 
