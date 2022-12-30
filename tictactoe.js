@@ -163,12 +163,29 @@ class TTTGame {
     }
   }
 
+  joinOr(choices, punc = ',', word = "or") {
+    //array of valid choices
+    //join them with ", " usually
+    //we want to
+    //a. have "or {last number}" at the very end
+    //b. if the list has only one left, just display that number
+
+    if (choices.length === 1) {
+      return choices[0];
+    } else if (choices.length === 2) {
+      return choices.join(` ${word} `);
+    } else {
+      return choices.slice(0, choices.length - 1)
+      .join(`${punc} `).concat(` ${word} ${choices[choices.length - 1]}`);
+    }
+  }
+
   humanMoves() {
     let choice;
 
     while (true) {
       let validChoices = this.board.unusedSquares();
-      const prompt = `Choose a square (${validChoices.join(", ")}): `;
+      const prompt = `Choose a square (${this.joinOr(validChoices)}): `;
       choice = rl.question(prompt);
 
       if (validChoices.includes(choice)) break;
