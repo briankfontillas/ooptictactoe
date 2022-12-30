@@ -163,7 +163,7 @@ class TTTGame {
     }
   }
 
-  joinOr(choices, punc = ',', word = "or") {
+  static joinOr(choices, punc = ',', word = "or") {
     if (choices.length === 1) {
       return choices[0];
     } else if (choices.length === 2) {
@@ -179,7 +179,7 @@ class TTTGame {
 
     while (true) {
       let validChoices = this.board.unusedSquares();
-      const prompt = `Choose a square (${this.joinOr(validChoices)}): `;
+      const prompt = `Choose a square (${TTTGame.joinOr(validChoices)}): `;
       choice = rl.question(prompt);
 
       if (validChoices.includes(choice)) break;
