@@ -72,7 +72,7 @@ class Board {
     return this.unusedSquares().length === 0;
   }
 
-  countMerkersFor(player, keys) {
+  countMarkersFor(player, keys) {
     let markers = keys.filter(key => {
       return this.squares[key].getMarker() === player.getMarker();
     });
@@ -219,7 +219,7 @@ class TTTGame {
 
   isWinner(player) {
     return TTTGame.POSSIBLE_WINNING_ROWS.some(row => {
-      return this.board.countMerkersFor(player, row) === 3;
+      return this.board.countMarkersFor(player, row) === 3;
     });
   }
 
