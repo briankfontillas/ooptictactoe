@@ -121,21 +121,27 @@ class TTTGame {
   }
 
   play() {
-    this.displayWelcomeMessage();
-
-    this.board.display();
     while (true) {
-      this.humanMoves();
-      if (this.gameOver()) break;
 
-      this.computerMoves();
-      if (this.gameOver()) break;
+      this.displayWelcomeMessage();
+
+      this.board.display();
+      while (true) {
+        this.humanMoves();
+        if (this.gameOver()) break;
+
+        this.computerMoves();
+        if (this.gameOver()) break;
+
+        this.board.displayWithClear();
+      }
 
       this.board.displayWithClear();
+      this.displayResults();
+      if (!this.playAgain()) break;
+      this.resetBoard();
     }
 
-    this.board.displayWithClear();
-    this.displayResults();
     this.displayGoodbyeMessage();
   }
 
@@ -150,6 +156,7 @@ class TTTGame {
   }
 
   displayGoodbyeMessage() {
+    console.log("");
     console.log("Thanks for playing Tic Tac Toe. Goodbye!");
   }
 
@@ -215,8 +222,25 @@ class TTTGame {
       return this.board.countMerkersFor(player, row) === 3;
     });
   }
+
+  playAgain() {
+    let answer;
+
+    while (true) {
+      answer = rl.question("Would you like to play again? (y/n): ").trimStart();
+
+      if (['y', 'ye', 'yes', 'n', 'no'].includes(answer[0].toLowerCase())) break;
+
+      console.log("That is not a valid answer. Please answer again (y/n): ");
+    }
+
+    return answer[0].toLowerCase() === 'y';
+  }
+
+  resetBoard() {
+    this.board = new Board();
+  }
 }
 
 let game = new TTTGame();
-console.log(Square.marker);
 game.play();
