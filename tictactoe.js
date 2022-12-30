@@ -229,7 +229,8 @@ class TTTGame {
     while (true) {
       answer = rl.question("Would you like to play again? (y/n): ").trimStart();
 
-      if (['y', 'ye', 'yes', 'n', 'no'].includes(answer[0].toLowerCase())) break;
+      if (answer.length > 0 &&
+          ['y', 'ye', 'yes', 'n', 'no'].includes(answer[0].toLowerCase())) break;
 
       console.log("That is not a valid answer. Please answer again (y/n): ");
     }
