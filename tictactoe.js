@@ -201,18 +201,10 @@ class TTTGame {
   computerMoves() {
     let validChoices = this.board.unusedSquares();
     let choice;
-
-    if (this.computerInDanger()) {
-      const ROW = TTTGame.POSSIBLE_WINNING_ROWS.find(row => {
-        return this.board.countMarkersFor(this.human, row) === 2 &&
-          !this.board.countMarkersFor(this.computer, row);
-      });
-
-      let rowIndex = ROW.map(square => {
-        return this.board.squares[square].getMarker();
-      }).findIndex(sqr => sqr === Square.UNUSED_SQUARE);
-
-      choice = ROW[rowIndex];
+    if (this.computerAlert(this.computer, this.human)) {
+      choice = this.computerSmartMove(this.computer, this.human);
+    } else if (this.computerAlert(this.human, this.computer)) {
+      choice = this.computerSmartMove(this.human, this.computer);
     } else {
       do {
         choice = Math.floor((9 * Math.random()) + 1).toString();
@@ -230,11 +222,24 @@ class TTTGame {
     return this.isWinner(this.human) || this.isWinner(this.computer);
   }
 
-  computerInDanger() {
+  computerAlert(twoSquarePlayer, oneSquarePlayer) {
     return TTTGame.POSSIBLE_WINNING_ROWS.some(row => {
-      return this.board.countMarkersFor(this.human, row) === 2 &&
-        !this.board.countMarkersFor(this.computer, row);
+      return this.board.countMarkersFor(twoSquarePlayer, row) === 2 &&
+        !this.board.countMarkersFor(oneSquarePlayer, row);
     });
+  }
+
+  computerSmartMove(twoSquarePlayer, oneSquarePlayer) {
+    const ROW = TTTGame.POSSIBLE_WINNING_ROWS.find(row => {
+      return this.board.countMarkersFor(twoSquarePlayer, row) === 2 &&
+        !this.board.countMarkersFor(oneSquarePlayer, row);
+    });
+
+    let index = ROW.map(square => {
+      return this.board.squares[square].getMarker();
+    }).findIndex(sqr => sqr === Square.UNUSED_SQUARE);
+
+    return ROW[index];
   }
 
   isWinner(player) {
