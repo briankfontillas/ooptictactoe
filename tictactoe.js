@@ -208,11 +208,16 @@ class TTTGame {
           !this.board.countMarkersFor(this.computer, row);
       });
 
-      let choice = ROW.find(sqr => sqr === Square.UNUSED_SQUARE);
+      let rowIndex = ROW.map(square => {
+        return this.board.squares[square].getMarker();
+      }).findIndex(sqr => sqr === Square.UNUSED_SQUARE);
+
+      choice = ROW[rowIndex];
+    } else {
+      do {
+        choice = Math.floor((9 * Math.random()) + 1).toString();
+      } while (!validChoices.includes(choice));
     }
-    do {
-      choice = Math.floor((9 * Math.random()) + 1).toString();
-    } while (!validChoices.includes(choice));
 
     this.board.markSquareAt(choice, this.computer.getMarker());
   }
