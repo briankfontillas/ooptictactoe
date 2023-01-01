@@ -5,7 +5,7 @@ class Square {
   static UNUSED_SQUARE = " ";
   static HUMAN_MARKER = "X";
   static COMPUTER_MARKER = "O";
-  static MIDDLE_SQUARE_INDEX = "5";
+  static MID_SQUARE_INDEX = "5";
 
   constructor(marker = Square.UNUSED_SQUARE) {
     this.marker = marker;
@@ -207,14 +207,10 @@ class TTTGame {
       choice = this.computerSmartMove(this.computer, this.human);
     } else if (this.computerAlert(this.human, this.computer)) {
       choice = this.computerSmartMove(this.human, this.computer);
+    } else if (this.board.unusedSquares().includes(Square.MID_SQUARE_INDEX)) {
+      choice = Square.MIDDLE_SQUARE_INDEX;
     } else {
-      if (this.board.unusedSquares().includes(Square.MIDDLE_SQUARE_INDEX)) {
-        choice = Square.MIDDLE_SQUARE_INDEX;
-      } else {
-        do {
-          choice = Math.floor((9 * Math.random()) + 1).toString();
-        } while (!validChoices.includes(choice));
-      }
+      choice = this.computerRandomMove(validChoices);
     }
 
     this.board.markSquareAt(choice, this.computer.getMarker());
@@ -233,6 +229,16 @@ class TTTGame {
       return this.board.countMarkersFor(twoSquarePlayer, row) === 2 &&
         !this.board.countMarkersFor(oneSquarePlayer, row);
     });
+  }
+
+  computerRandomMove(availableChoices) {
+    let choice;
+
+    do {
+      choice = Math.floor((9 * Math.random()) + 1).toString();
+    } while (!availableChoices.includes(choice));
+
+    return choice;
   }
 
   computerSmartMove(twoSquarePlayer, oneSquarePlayer) {
