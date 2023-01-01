@@ -202,6 +202,14 @@ class TTTGame {
     let validChoices = this.board.unusedSquares();
     let choice;
 
+    if (this.computerInDanger()) {
+      const ROW = TTTGame.POSSIBLE_WINNING_ROWS.find(row => {
+        return this.board.countMarkersFor(this.human, row) === 2 &&
+          !this.board.countMarkersFor(this.computer, row);
+      });
+
+      let choice = ROW.find(sqr => sqr === Square.UNUSED_SQUARE);
+    }
     do {
       choice = Math.floor((9 * Math.random()) + 1).toString();
     } while (!validChoices.includes(choice));
@@ -215,6 +223,13 @@ class TTTGame {
 
   someoneWon() {
     return this.isWinner(this.human) || this.isWinner(this.computer);
+  }
+
+  computerInDanger() {
+    return TTTGame.POSSIBLE_WINNING_ROWS.some(row => {
+      return this.board.countMarkersFor(this.human, row) === 2 &&
+        !this.board.countMarkersFor(this.computer, row);
+    });
   }
 
   isWinner(player) {
