@@ -195,12 +195,17 @@ class TTTGame {
   }
 
   fullDisplay() {
-    this.turn === 0 ? this.displayWelcomeMessage() : this.displayScoreChart();
+    if (this.turn === 0) {
+      this.displayWelcomeMessage();
+    } else {
+      this.displayScoreChart();
+    }
+
     this.board.display();
   }
 
   playerMoves() {
-    
+
     if (this.humansTurn) {
       if (this.turn !== 0) {
         this.fullDisplay();
@@ -216,7 +221,11 @@ class TTTGame {
   }
 
   switchTurn() {
-    this.humansTurn ? this.humansTurn = false : this.humansTurn = true;
+    if (this.humansTurn) {
+      this.humansTurn = false;
+    } else {
+      this.humansTurn = true;
+    }
   }
 
   displayWelcomeMessage() {
@@ -347,7 +356,8 @@ class TTTGame {
   }
 
   isGameWin() {
-    return [this.human.score, this.computer.score].includes(TTTGame.WINNING_SCORE);
+    return [this.human.score, this.computer.score]
+      .includes(TTTGame.WINNING_SCORE);
   }
 
   finalScore() {
