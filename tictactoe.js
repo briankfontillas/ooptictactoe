@@ -128,6 +128,8 @@ class TTTGame {
     this.human = new Human();
     this.computer = new Computer();
     this.turn = 0;
+    this.humansTurn = Boolean(Math.floor(Math.random() * 2));
+    this.goFirst = null;
   }
 
   static joinOr(choices, punc = ',', word = "or") {
@@ -141,23 +143,31 @@ class TTTGame {
     }
   }
 
+  calculateFirstTurn() {
+    if (this.goFirst === null) {
+      this.goFirst = this.humansTurn;
+    } else if (this.goFirst) {
+      this.goFirst = false;
+      this.humansTurn = false;
+    } else {
+      this.goFirst = true;
+      this.humansTurn = true;
+    }
+  }
+
   play() {
     while (true) {
 
-      this.displayWelcomeMessage();
+      console.clear();
+      if (this.turn === 0) this.displayWelcomeMessage();
+      this.calculateFirstTurn();
 
-      this.board.display();
       while (true) {
-        if (this.turn !== 0) {
-          console.clear();
-          this.displayScoreChart();
-          this.board.display();
-        }
 
-        this.humanMoves();
+        this.playerMoves();
         if (this.gameOver()) break;
 
-        this.computerMoves();
+        this.playerMoves();
         if (this.gameOver()) break;
 
         this.nextTurn();
@@ -182,6 +192,31 @@ class TTTGame {
 
   nextTurn() {
     this.turn += 1;
+  }
+
+  fullDisplay() {
+    this.turn === 0 ? this.displayWelcomeMessage() : this.displayScoreChart();
+    this.board.display();
+  }
+
+  playerMoves() {
+    
+    if (this.humansTurn) {
+      if (this.turn !== 0) {
+        this.fullDisplay();
+      } else {
+        this.board.display();
+      }
+      this.humanMoves();
+      this.switchTurn();
+    } else {
+      this.computerMoves();
+      this.switchTurn();
+    }
+  }
+
+  switchTurn() {
+    this.humansTurn ? this.humansTurn = false : this.humansTurn = true;
   }
 
   displayWelcomeMessage() {
@@ -334,7 +369,7 @@ class TTTGame {
     } else {
       msg = "It's a tie! Better luck next time!";
     }
-    
+
     console.log(msg);
   }
 
