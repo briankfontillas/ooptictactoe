@@ -83,8 +83,15 @@ class Board {
 }
 
 class Player {
+  static STARTING_SCORE = 0;
+
   constructor(marker) {
     this.marker = marker;
+    this.score = Player.STARTING_SCORE;
+  }
+
+  addPoint() {
+    this.score += 1;
   }
 
   getMarker() {
@@ -105,6 +112,7 @@ class Computer extends Player {
 }
 
 class TTTGame {
+  static WINNING_SCORE = 3;
   static POSSIBLE_WINNING_ROWS = [
     [ "1", "2", "3" ],            // top row of board
     [ "4", "5", "6" ],            // center row of board
@@ -119,6 +127,18 @@ class TTTGame {
     this.board = new Board();
     this.human = new Human();
     this.computer = new Computer();
+    this.turn = 0;
+  }
+
+  static joinOr(choices, punc = ',', word = "or") {
+    if (choices.length === 1) {
+      return choices[0];
+    } else if (choices.length === 2) {
+      return choices.join(` ${word} `);
+    } else {
+      return choices.slice(0, choices.length - 1)
+        .join(`${punc} `).concat(` ${word} ${choices[choices.length - 1]}`);
+    }
   }
 
   play() {
@@ -128,22 +148,40 @@ class TTTGame {
 
       this.board.display();
       while (true) {
+        if (this.turn !== 0) {
+          console.clear();
+          this.displayScoreChart();
+          this.board.display();
+        }
+
         this.humanMoves();
         if (this.gameOver()) break;
 
         this.computerMoves();
         if (this.gameOver()) break;
 
-        this.board.displayWithClear();
+        this.nextTurn();
+        console.clear();
       }
 
-      this.board.displayWithClear();
+      if (this.isWinner(this.human)) {
+        this.human.addPoint();
+      } else if (this.isWinner(this.computer)) {
+        this.computer.addPoint();
+      }
+      this.displayScoreChart();
+      this.board.display();
       this.displayResults();
-      if (!this.playAgain()) break;
+      if (this.isGameWin() || !this.playAgain()) break;
       this.resetBoard();
     }
 
+    this.finalScore();
     this.displayGoodbyeMessage();
+  }
+
+  nextTurn() {
+    this.turn += 1;
   }
 
   displayWelcomeMessage() {
@@ -151,6 +189,15 @@ class TTTGame {
     console.log("+-------------------------+");
     console.log("|                         |");
     console.log("| Welcome to Tic Tac Toe! |");
+    console.log("|                         |");
+    console.log("+-------------------------+");
+    console.log("");
+  }
+
+  displayScoreChart() {
+    console.log("+-------------------------+");
+    console.log("|                         |");
+    console.log(`|  You: ${this.human.score} | Computer: ${this.computer.score}   |`);
     console.log("|                         |");
     console.log("+-------------------------+");
     console.log("");
@@ -168,17 +215,6 @@ class TTTGame {
       console.log("I won! Take that, human!");
     } else {
       console.log("A tie game. How boring.");
-    }
-  }
-
-  static joinOr(choices, punc = ',', word = "or") {
-    if (choices.length === 1) {
-      return choices[0];
-    } else if (choices.length === 2) {
-      return choices.join(` ${word} `);
-    } else {
-      return choices.slice(0, choices.length - 1)
-        .join(`${punc} `).concat(` ${word} ${choices[choices.length - 1]}`);
     }
   }
 
@@ -208,7 +244,7 @@ class TTTGame {
     } else if (this.computerAlert(this.human, this.computer)) {
       choice = this.computerSmartMove(this.human, this.computer);
     } else if (this.board.unusedSquares().includes(Square.MID_SQUARE_INDEX)) {
-      choice = Square.MIDDLE_SQUARE_INDEX;
+      choice = Square.MID_SQUARE_INDEX;
     } else {
       choice = this.computerRandomMove(validChoices);
     }
@@ -264,7 +300,7 @@ class TTTGame {
     let answer;
 
     while (true) {
-      answer = rl.question("Would you like to play again? (y/n): ").trimStart();
+      answer = rl.question("Would you like to play the next round? (y/n): ").trimStart();
 
       if (answer.length > 0 &&
           ['y', 'ye', 'yes', 'n', 'no'].includes(answer[0].toLowerCase())) break;
@@ -273,6 +309,33 @@ class TTTGame {
     }
 
     return answer[0].toLowerCase() === 'y';
+  }
+
+  isGameWin() {
+    return [this.human.score, this.computer.score].includes(TTTGame.WINNING_SCORE);
+  }
+
+  finalScore() {
+    let msg;
+
+    console.clear();
+    console.log("+-------------------------+");
+    console.log("|                         |");
+    console.log(`|       Final Score       |`);
+    console.log(`|  You: ${this.human.score} | Computer: ${this.computer.score}   |`);
+    console.log("|                         |");
+    console.log("+-------------------------+");
+    console.log("");
+
+    if (this.human.score > this.computer.score) {
+      msg = "Congratulations! You won the match!";
+    } else if (this.human.score < this.computer.score) {
+      msg = "Computer won! Better luck next time!";
+    } else {
+      msg = "It's a tie! Better luck next time!";
+    }
+    
+    console.log(msg);
   }
 
   resetBoard() {
